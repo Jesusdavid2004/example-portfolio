@@ -14,6 +14,14 @@ type EducationItem = {
   period: string;
 };
 
+type ProjectItem = {
+  name: string;
+  description: string;
+  link: string;
+};
+
+type ContactLink = { label: string; url: string };
+
 export type Dictionary = {
   intro: string;
   sections: {
@@ -27,6 +35,8 @@ export type Dictionary = {
     };
     editingTools: string;
     languages: string;
+    projects: { title: string; items: ProjectItem[] };
+    contact: { title: string; emailLabel: string; email: string; links: ContactLink[] };
   };
   switcher: { label: string; es: string; en: string };
 };
@@ -86,9 +96,40 @@ const dictionaries: Record<Lang, Dictionary> = {
       },
       editingTools: "Herramientas de edición",
       languages: "Idiomas",
+      projects: {
+        title: "Proyectos",
+        items: [
+          {
+            name: "Brandify",
+            description: "Sistema de identidad visual para startup fintech.",
+            link: "#",
+          },
+          {
+            name: "MonoMark",
+            description: "Librería de monogramas minimalistas listos para adaptar.",
+            link: "#",
+          },
+          {
+            name: "Pack Social",
+            description: "Plantillas de redes sociales consistentes para pymes.",
+            link: "#",
+          },
+        ],
+      },
+      contact: {
+        title: "Contacto",
+        emailLabel: "Email",
+        email: "sunil@example.com",
+        links: [
+          { label: "Behance", url: "#" },
+          { label: "Dribbble", url: "#" },
+          { label: "LinkedIn", url: "#" },
+        ],
+      },
     },
     switcher: { label: "Idioma", es: "Español", en: "Inglés" },
   },
+
   en: {
     intro:
       "My name is Sunil Kumar, a self-taught logo/brand designer with 4+ years of experience creating modern, clean, and minimal brands that make a lasting impression.",
@@ -136,18 +177,51 @@ const dictionaries: Record<Lang, Dictionary> = {
         },
         graduation: {
           title: "Graduation",
-          field: "Bachelor of fine Arts",
+          field: "Bachelor of Fine Arts",
           location: "IGNOU Delhi, India",
           period: "2017 - 21",
         },
       },
       editingTools: "Editing Tools",
       languages: "Languages",
+      projects: {
+        title: "Projects",
+        items: [
+          {
+            name: "Brandify",
+            description: "Visual identity system for a fintech startup.",
+            link: "#",
+          },
+          {
+            name: "MonoMark",
+            description: "Library of minimal monograms ready to customize.",
+            link: "#",
+          },
+          {
+            name: "Social Pack",
+            description: "Consistent social media templates for SMBs.",
+            link: "#",
+          },
+        ],
+      },
+      contact: {
+        title: "Contact",
+        emailLabel: "Email",
+        email: "sunil@example.com",
+        links: [
+          { label: "Behance", url: "#" },
+          { label: "Dribbble", url: "#" },
+          { label: "LinkedIn", url: "#" },
+        ],
+      },
     },
     switcher: { label: "Language", es: "Spanish", en: "English" },
   },
 };
 
 export async function getDictionary(lang: Lang): Promise<Dictionary> {
-  return dictionaries[lang] ?? dictionaries[defaultLang];
+  const key = lang as keyof typeof dictionaries;
+  const dict = dictionaries[key] ?? dictionaries[defaultLang];
+  if (!dict) throw new Error(`No dictionary found for lang: ${lang}`);
+  return dict;
 }

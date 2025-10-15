@@ -1,7 +1,9 @@
 import Image from "next/image";
+import { notFound } from "next/navigation";
 import { getDictionary } from "../i18n/dictionaries";
 import { Lang, languages } from "../i18n/config";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
+
+export const dynamicParams = false;
 
 export async function generateStaticParams() {
   return languages.map((lang) => ({ lang }));
@@ -13,167 +15,193 @@ export default async function Home({
   params: Promise<{ lang: Lang }>;
 }) {
   const { lang } = await params;
+  if (!(languages as readonly string[]).includes(lang)) notFound();
+
   const dict = await getDictionary(lang);
 
   return (
     <div className="font-sans flex justify-center">
-      <LanguageSwitcher currentLang={lang} />
-      <main className="grid grid-cols-12 container mt-20 gap-10">
-        <span className="flex items-center justify-center col-span-3 row-span-2 bg-white rounded-2xl overflow-hidden">
+      <main
+        className="container mx-auto mt-24 px-4 grid grid-cols-12 gap-6
+                   sm:grid-cols-6 sm:gap-4
+                   lg:grid-cols-12 lg:gap-8"
+      >
+        {/* Avatar */}
+        <span className="flex items-center justify-center col-span-12 sm:col-span-6 lg:col-span-3 lg:row-span-2 card overflow-hidden">
           <Image src="/avatar.jpg" alt="avatar" width={300} height={300} />
         </span>
 
-        <p className="p-5 text-2xl text-white col-span-9 rounded-2xl bg-foreground">
+        {/* Intro */}
+        <p className="col-span-12 lg:col-span-9 card p-5 text-base sm:text-lg lg:text-xl text-text">
           {dict.intro}
         </p>
 
-        <ul className="flex items-center col-span-9 gap-4 p-5 rounded-2xl bg-foreground">
-          <li className="text-white text-lg font-bold border-r pr-4">
+        {/* Interests */}
+        <ul className="col-span-12 lg:col-span-9 card p-5 flex flex-wrap items-center gap-3">
+          <li className="text-text text-base sm:text-lg font-bold border-r pr-4 border-border">
             {dict.sections.interests.title}
           </li>
           {dict.sections.interests.items.map((item) => (
-            <li
-              key={item}
-              className="flex items-center bg-background rounded-lg text-white text-sm px-4 py-2"
-            >
+            <li key={item} className="chip">
               {item}
             </li>
           ))}
         </ul>
 
-        <article className="col-span-6 rounded-2xl bg-foreground p-10">
-          <section className="flex items-center justify-between border-b border-b-grey pb-10">
+        {/* Experience - Freelance */}
+        <article className="col-span-12 lg:col-span-6 card p-6 sm:p-8">
+          <section className="flex items-center justify-between border-b border-b-border pb-6 sm:pb-8">
             <header className="flex flex-col">
-              <h3 className="text-2xl font-bold text-white">
+              <h3 className="text-xl sm:text-2xl font-bold text-text">
                 {dict.sections.experience.freelance.title}
               </h3>
-              <p className="text-grey text-sm">
+              <p className="text-muted text-sm">
                 {dict.sections.experience.freelance.role}
               </p>
             </header>
-            <span className="bg-background rounded-lg text-white text-sm p-4">
+            <span className="badge">
               {dict.sections.experience.freelance.period}
             </span>
           </section>
-          <ul className="list-disc list-inside text-white text-sm mt-6">
+          <ul className="list-disc list-inside text-text text-sm mt-4 sm:mt-6 space-y-2">
             {dict.sections.experience.freelance.bullets.map((b) => (
-              <li key={b}>{b}</li>
+              <li key={b} className="text-text">{b}</li>
             ))}
           </ul>
         </article>
 
-        <article className="col-span-6 rounded-2xl bg-foreground p-10">
-          <section className="flex items-center justify-between border-b border-b-grey pb-10">
+        {/* Experience - Meetzed */}
+        <article className="col-span-12 lg:col-span-6 card p-6 sm:p-8">
+          <section className="flex items-center justify-between border-b border-b-border pb-6 sm:pb-8">
             <header className="flex flex-col">
-              <h3 className="text-2xl font-bold text-white">
+              <h3 className="text-xl sm:text-2xl font-bold text-text">
                 {dict.sections.experience.meetzed.title}
               </h3>
-              <p className="text-grey text-sm">
+              <p className="text-muted text-sm">
                 {dict.sections.experience.meetzed.role}
               </p>
             </header>
-            <span className="bg-background rounded-lg text-white text-sm p-4">
+            <span className="badge">
               {dict.sections.experience.meetzed.period}
             </span>
           </section>
-          <ul className="list-disc list-inside text-white text-sm mt-6">
+          <ul className="list-disc list-inside text-text text-sm mt-4 sm:mt-6 space-y-2">
             {dict.sections.experience.meetzed.bullets.map((b) => (
               <li key={b}>{b}</li>
             ))}
           </ul>
         </article>
 
-        <ul className="flex gap-4 items-center col-span-6 rounded-2xl bg-foreground p-10">
-          <li className="text-white text-xl font-bold border-r pr-4">
+        {/* Design Tools */}
+        <ul className="col-span-12 lg:col-span-6 card p-6 sm:p-8 flex flex-wrap items-center gap-3">
+          <li className="text-text text-lg font-bold border-r pr-4 border-border">
             {dict.sections.designTools}
           </li>
-          <li className="flex items-center bg-[#360300] rounded-lg font-bold text-[#da9f4c] text-xl px-4 py-2">
-            Ai
-          </li>
-          <li className="flex items-center bg-[#0b172a] rounded-lg font-bold text-[#74aaf2] text-xl px-4 py-2">
-            Ps
-          </li>
-          <li className="flex items-center bg-[#59051e] rounded-lg font-bold text-[#d84b6f] text-xl px-4 py-2">
-            Id
-          </li>
-          <li className="flex items-center bg-[#480d30] rounded-lg font-bold text-[#de6ff0] text-xl px-4 py-2">
-            Xd
-          </li>
+          <li className="chip" style={{ background: '#360300', color: '#da9f4c' }}>Ai</li>
+          <li className="chip" style={{ background: '#0b172a', color: '#74aaf2' }}>Ps</li>
+          <li className="chip" style={{ background: '#59051e', color: '#d84b6f' }}>Id</li>
+          <li className="chip" style={{ background: '#480d30', color: '#de6ff0' }}>Xd</li>
         </ul>
 
-        <section className="flex flex-col gap-4 items-center col-span-6 row-span-3 rounded-2xl bg-foreground p-10">
-          <article className="flex items-center justify-between w-full border-b border-b-grey pb-8">
+        {/* Education (stack) */}
+        <section className="col-span-12 lg:col-span-6 lg:row-span-3 card p-6 sm:p-8 flex flex-col gap-4">
+          <article className="flex items-center justify-between w-full border-b border-b-border pb-6">
             <span className="flex flex-col">
-              <h2 className="text-white text-3xl font-bold">
+              <h2 className="text-text text-2xl font-bold">
                 {dict.sections.education.highSchool.title}
               </h2>
-              <p className="text-grey text-lg">
-                {dict.sections.education.highSchool.field}
-              </p>
-              <p className="text-grey text-sm">
-                {dict.sections.education.highSchool.location}
-              </p>
+              <p className="text-muted text-base">{dict.sections.education.highSchool.field}</p>
+              <p className="text-muted text-sm">{dict.sections.education.highSchool.location}</p>
             </span>
-            <span className="bg-background rounded-lg text-white text-sm p-4">
-              {dict.sections.education.highSchool.period}
-            </span>
+            <span className="badge">{dict.sections.education.highSchool.period}</span>
           </article>
 
-          <article className="flex items-center justify-between w-full border-b border-b-grey pb-8">
+          <article className="flex items-center justify-between w-full border-b border-b-border pb-6">
             <span className="flex flex-col">
-              <h2 className="text-white text-3xl font-bold">
+              <h2 className="text-text text-2xl font-bold">
                 {dict.sections.education.diploma.title}
               </h2>
-              <p className="text-grey text-lg">
-                {dict.sections.education.diploma.field}
-              </p>
-              <p className="text-grey text-sm">
-                {dict.sections.education.diploma.location}
-              </p>
+              <p className="text-muted text-base">{dict.sections.education.diploma.field}</p>
+              <p className="text-muted text-sm">{dict.sections.education.diploma.location}</p>
             </span>
-            <span className="bg-background rounded-lg text-white text-sm p-4">
-              {dict.sections.education.diploma.period}
-            </span>
+            <span className="badge">{dict.sections.education.diploma.period}</span>
           </article>
 
           <article className="flex items-center justify-between w-full">
             <span className="flex flex-col">
-              <h2 className="text-white text-3xl font-bold">
+              <h2 className="text-text text-2xl font-bold">
                 {dict.sections.education.graduation.title}
               </h2>
-              <p className="text-grey text-lg">
-                {dict.sections.education.graduation.field}
-              </p>
-              <p className="text-grey text-sm">
-                {dict.sections.education.graduation.location}
-              </p>
+              <p className="text-muted text-base">{dict.sections.education.graduation.field}</p>
+              <p className="text-muted text-sm">{dict.sections.education.graduation.location}</p>
             </span>
-            <span className="bg-background rounded-lg text-white text-sm p-4">
-              {dict.sections.education.graduation.period}
-            </span>
+            <span className="badge">{dict.sections.education.graduation.period}</span>
           </article>
         </section>
 
-        <ul className="flex gap-4 items-center col-span-6 rounded-2xl bg-foreground p-10">
-          <li className="text-white text-xl font-bold border-r pr-4">
+        {/* Editing Tools */}
+        <ul className="col-span-12 lg:col-span-6 card p-6 sm:p-8 flex flex-wrap items-center gap-3">
+          <li className="text-text text-lg font-bold border-r pr-4 border-border">
             {dict.sections.editingTools}
           </li>
-          <li className="flex items-center bg-[#000155] rounded-lg font-bold text-[#a0a0f9] text-xl px-4 py-2">
-            Ae
-          </li>
-          <li className="flex items-center bg-[#02035e] rounded-lg font-bold text-[#9997f9] text-xl px-4 py-2">
-            Pr
-          </li>
+          <li className="chip" style={{ background: '#000155', color: '#a0a0f9' }}>Ae</li>
+          <li className="chip" style={{ background: '#02035e', color: '#9997f9' }}>Pr</li>
         </ul>
 
-        <ul className="flex gap-4 items-center col-span-6 rounded-2xl bg-foreground p-10">
-          <li className="text-white text-xl font-bold border-r pr-4">
+        {/* Languages */}
+        <ul className="col-span-12 lg:col-span-6 card p-6 sm:p-8 flex items-center gap-4">
+          <li className="text-text text-lg font-bold border-r pr-4 border-border">
             {dict.sections.languages}
           </li>
-          <li className="text-4xl">🇧🇴</li>
-          <li className="text-4xl">🇬🇧</li>
-          <li className="text-4xl">🇺🇸</li>
+          <li className="text-3xl sm:text-4xl">🇧🇴</li>
+          <li className="text-3xl sm:text-4xl">🇬🇧</li>
+          <li className="text-3xl sm:text-4xl">🇺🇸</li>
         </ul>
+
+        {/* Projects */}
+        <section className="col-span-12 card p-6 sm:p-8">
+          <header className="flex items-center justify-between border-b border-b-border pb-4 sm:pb-6">
+            <h3 className="text-2xl font-bold text-text">{dict.sections.projects.title}</h3>
+          </header>
+          <div className="mt-6 grid grid-cols-12 gap-4 sm:gap-6">
+            {dict.sections.projects.items.map((p) => (
+              <a
+                key={p.name}
+                href={p.link}
+                className="col-span-12 md:col-span-6 lg:col-span-4 bg-surface-2 border border-border rounded-xl p-5 text-text hover:bg-surface transition-colors"
+              >
+                <h4 className="text-lg font-bold">{p.name}</h4>
+                <p className="text-sm text-muted mt-2">{p.description}</p>
+                <span className="inline-block mt-3 text-sm underline">Ver más →</span>
+              </a>
+            ))}
+          </div>
+        </section>
+
+        {/* Contact */}
+        <section className="col-span-12 card p-6 sm:p-8">
+          <header className="flex items-center justify-between border-b border-b-border pb-4 sm:pb-6">
+            <h3 className="text-2xl font-bold text-text">{dict.sections.contact.title}</h3>
+          </header>
+          <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-text">
+              <span className="text-muted mr-2">{dict.sections.contact.emailLabel}:</span>
+              <a className="underline" href={`mailto:${dict.sections.contact.email}`}>
+                {dict.sections.contact.email}
+              </a>
+            </p>
+            <ul className="flex gap-3">
+              {dict.sections.contact.links.map((l) => (
+                <li key={l.label}>
+                  <a className="chip hover:bg-surface" href={l.url}>
+                    {l.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
       </main>
     </div>
   );
