@@ -1,14 +1,10 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { Lang, languages } from "../i18n/config";
-import "../globals.css";
+import { languages } from "../i18n/config";
 import { notFound } from "next/navigation";
 import ThemeProvider from "@/components/ThemeProvider";
 import ThemeToggle from "@/components/ThemeToggle";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
-
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
-const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
+import LangSetter from "@/components/LangSetter";
 
 export const metadata: Metadata = {
   title: "Portfolio",
@@ -24,28 +20,25 @@ export default async function LangLayout({
   params,
 }: {
   children: React.ReactNode;
-  params: Promise<{ lang: Lang }>;
+  // 👈 aceptar string (lo que Next te pasa)
+  params: Promise<{ lang: string }>;
 }) {
   const { lang } = await params;
 
+  // validar y narrow en runtime
   if (!(languages as readonly string[]).includes(lang)) {
     notFound();
   }
 
   return (
-    <html lang={lang}>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {/* Aplica el tema guardado */}
-        <ThemeProvider />
-
-        {/* Barra fija superior derecha: idioma + theme */}
-        <div className="fixed top-6 right-6 z-50 flex gap-2">
-          <LanguageSwitcher currentLang={lang} />
-          <ThemeToggle />
-        </div>
-
-        {children}
-      </body>
-    </html>
+    <>
+      <LangSetter lang={lang} />
+      <ThemeProvider />
+      <div className="fixed top-6 right-6 z-50 flex gap-2">
+        <LanguageSwitcher currentLang={lang as any} />
+        <ThemeToggle />
+      </div>
+      {children}
+    </>
   );
 }

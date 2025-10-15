@@ -12,6 +12,9 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+
+    /* 👇 clave: alias */
+
     "baseUrl": "src",
     "paths": {
       "@/*": ["*"]

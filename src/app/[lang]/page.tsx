@@ -1,7 +1,8 @@
+// src/app/[lang]/page.tsx
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getDictionary } from "../i18n/dictionaries";
-import { Lang, languages } from "../i18n/config";
+import { languages } from "../i18n/config";
 
 export const dynamicParams = false;
 
@@ -9,13 +10,21 @@ export async function generateStaticParams() {
   return languages.map((lang) => ({ lang }));
 }
 
+// helper de tipo para validar el idioma en runtime
+const isLang = (v: string): v is (typeof languages)[number] =>
+  (languages as readonly string[]).includes(v);
+
 export default async function Home({
   params,
 }: {
-  params: Promise<{ lang: Lang }>;
+  // ✅ Next 15 pasa `string`, no el union type
+  params: Promise<{ lang: string }>;
 }) {
   const { lang } = await params;
-  if (!(languages as readonly string[]).includes(lang)) notFound();
+
+  if (!isLang(lang)) {
+    notFound();
+  }
 
   const dict = await getDictionary(lang);
 
@@ -65,7 +74,9 @@ export default async function Home({
           </section>
           <ul className="list-disc list-inside text-text text-sm mt-4 sm:mt-6 space-y-2">
             {dict.sections.experience.freelance.bullets.map((b) => (
-              <li key={b} className="text-text">{b}</li>
+              <li key={b} className="text-text">
+                {b}
+              </li>
             ))}
           </ul>
         </article>
@@ -97,10 +108,18 @@ export default async function Home({
           <li className="text-text text-lg font-bold border-r pr-4 border-border">
             {dict.sections.designTools}
           </li>
-          <li className="chip" style={{ background: '#360300', color: '#da9f4c' }}>Ai</li>
-          <li className="chip" style={{ background: '#0b172a', color: '#74aaf2' }}>Ps</li>
-          <li className="chip" style={{ background: '#59051e', color: '#d84b6f' }}>Id</li>
-          <li className="chip" style={{ background: '#480d30', color: '#de6ff0' }}>Xd</li>
+          <li className="chip" style={{ background: "#360300", color: "#da9f4c" }}>
+            Ai
+          </li>
+          <li className="chip" style={{ background: "#0b172a", color: "#74aaf2" }}>
+            Ps
+          </li>
+          <li className="chip" style={{ background: "#59051e", color: "#d84b6f" }}>
+            Id
+          </li>
+          <li className="chip" style={{ background: "#480d30", color: "#de6ff0" }}>
+            Xd
+          </li>
         </ul>
 
         {/* Education (stack) */}
@@ -110,10 +129,16 @@ export default async function Home({
               <h2 className="text-text text-2xl font-bold">
                 {dict.sections.education.highSchool.title}
               </h2>
-              <p className="text-muted text-base">{dict.sections.education.highSchool.field}</p>
-              <p className="text-muted text-sm">{dict.sections.education.highSchool.location}</p>
+              <p className="text-muted text-base">
+                {dict.sections.education.highSchool.field}
+              </p>
+              <p className="text-muted text-sm">
+                {dict.sections.education.highSchool.location}
+              </p>
             </span>
-            <span className="badge">{dict.sections.education.highSchool.period}</span>
+            <span className="badge">
+              {dict.sections.education.highSchool.period}
+            </span>
           </article>
 
           <article className="flex items-center justify-between w-full border-b border-b-border pb-6">
@@ -121,10 +146,16 @@ export default async function Home({
               <h2 className="text-text text-2xl font-bold">
                 {dict.sections.education.diploma.title}
               </h2>
-              <p className="text-muted text-base">{dict.sections.education.diploma.field}</p>
-              <p className="text-muted text-sm">{dict.sections.education.diploma.location}</p>
+              <p className="text-muted text-base">
+                {dict.sections.education.diploma.field}
+              </p>
+              <p className="text-muted text-sm">
+                {dict.sections.education.diploma.location}
+              </p>
             </span>
-            <span className="badge">{dict.sections.education.diploma.period}</span>
+            <span className="badge">
+              {dict.sections.education.diploma.period}
+            </span>
           </article>
 
           <article className="flex items-center justify-between w-full">
@@ -132,10 +163,16 @@ export default async function Home({
               <h2 className="text-text text-2xl font-bold">
                 {dict.sections.education.graduation.title}
               </h2>
-              <p className="text-muted text-base">{dict.sections.education.graduation.field}</p>
-              <p className="text-muted text-sm">{dict.sections.education.graduation.location}</p>
+              <p className="text-muted text-base">
+                {dict.sections.education.graduation.field}
+              </p>
+              <p className="text-muted text-sm">
+                {dict.sections.education.graduation.location}
+              </p>
             </span>
-            <span className="badge">{dict.sections.education.graduation.period}</span>
+            <span className="badge">
+              {dict.sections.education.graduation.period}
+            </span>
           </article>
         </section>
 
@@ -144,8 +181,12 @@ export default async function Home({
           <li className="text-text text-lg font-bold border-r pr-4 border-border">
             {dict.sections.editingTools}
           </li>
-          <li className="chip" style={{ background: '#000155', color: '#a0a0f9' }}>Ae</li>
-          <li className="chip" style={{ background: '#02035e', color: '#9997f9' }}>Pr</li>
+          <li className="chip" style={{ background: "#000155", color: "#a0a0f9" }}>
+            Ae
+          </li>
+          <li className="chip" style={{ background: "#02035e", color: "#9997f9" }}>
+            Pr
+          </li>
         </ul>
 
         {/* Languages */}
@@ -161,7 +202,9 @@ export default async function Home({
         {/* Projects */}
         <section className="col-span-12 card p-6 sm:p-8">
           <header className="flex items-center justify-between border-b border-b-border pb-4 sm:pb-6">
-            <h3 className="text-2xl font-bold text-text">{dict.sections.projects.title}</h3>
+            <h3 className="text-2xl font-bold text-text">
+              {dict.sections.projects.title}
+            </h3>
           </header>
           <div className="mt-6 grid grid-cols-12 gap-4 sm:gap-6">
             {dict.sections.projects.items.map((p) => (
@@ -181,12 +224,19 @@ export default async function Home({
         {/* Contact */}
         <section className="col-span-12 card p-6 sm:p-8">
           <header className="flex items-center justify-between border-b border-b-border pb-4 sm:pb-6">
-            <h3 className="text-2xl font-bold text-text">{dict.sections.contact.title}</h3>
+            <h3 className="text-2xl font-bold text-text">
+              {dict.sections.contact.title}
+            </h3>
           </header>
           <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-text">
-              <span className="text-muted mr-2">{dict.sections.contact.emailLabel}:</span>
-              <a className="underline" href={`mailto:${dict.sections.contact.email}`}>
+              <span className="text-muted mr-2">
+                {dict.sections.contact.emailLabel}:
+              </span>
+              <a
+                className="underline"
+                href={`mailto:${dict.sections.contact.email}`}
+              >
                 {dict.sections.contact.email}
               </a>
             </p>
@@ -201,7 +251,6 @@ export default async function Home({
             </ul>
           </div>
         </section>
-
       </main>
     </div>
   );
